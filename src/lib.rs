@@ -56,12 +56,24 @@ pub fn run() -> MyResult<()> {
                     first_file = false;
                 }
 
-                // Prints each line. Specifically uses read_line method to
-                // account for different line endings
-                for _ in 0..cli.lines {
-                    let mut buf = String::new();
-                    file.read_line(&mut buf)?;
-                    print!("{}", buf)
+                // Check if user input argument for bytes
+                if let Some(num_bytes) = cli.bytes {
+                    // Reads each byte until the user defined limit or until EOF
+                    // and stores them in a vec
+                    let mut buf: Vec<u8> = vec![0; num_bytes as usize];
+                    let n = file.read(&mut buf)?;
+                    // We use the from_utf8_lossy method to mimic the behavior
+                    // of head when dealing with multibyte characters
+                    let buf = String::from_utf8_lossy(&buf[..n]);
+                    print!("{}", buf);
+                } else {
+                    // Prints each line. Specifically uses read_line method to
+                    // account for different line endings
+                    for _ in 0..cli.lines {
+                        let mut buf = String::new();
+                        file.read_line(&mut buf)?;
+                        print!("{}", buf);
+                    }
                 }
             }
         }
