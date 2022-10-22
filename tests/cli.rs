@@ -9,7 +9,7 @@ use std::{
 
 type TestResult = Result<(), Box<dyn Error>>;
 
-const PRG: &str = "headr";
+const PRG: &str = "rust_head";
 const EMPTY: &str = "./tests/inputs/empty.txt";
 const ONE: &str = "./tests/inputs/one.txt";
 const TWO: &str = "./tests/inputs/two.txt";
@@ -39,7 +39,7 @@ fn gen_bad_file() -> String {
 #[test]
 fn dies_bad_bytes() -> TestResult {
     let bad = random_string();
-    let expected = format!("illegal byte count -- {}", &bad);
+    let expected = format!("Invalid value '{}'", &bad);
     Command::cargo_bin(PRG)?
         .args(&["-c", &bad, EMPTY])
         .assert()
@@ -53,7 +53,7 @@ fn dies_bad_bytes() -> TestResult {
 #[test]
 fn dies_bad_lines() -> TestResult {
     let bad = random_string();
-    let expected = format!("illegal line count -- {}", &bad);
+    let expected = format!("Invalid value '{}'", &bad);
     Command::cargo_bin(PRG)?
         .args(&["-n", &bad, EMPTY])
         .assert()
@@ -109,11 +109,7 @@ fn run(args: &[&str], expected_file: &str) -> TestResult {
 }
 
 // --------------------------------------------------
-fn run_stdin(
-    args: &[&str],
-    input_file: &str,
-    expected_file: &str,
-) -> TestResult {
+fn run_stdin(args: &[&str], input_file: &str, expected_file: &str) -> TestResult {
     // Extra work here due to lossy UTF
     let mut file = File::open(expected_file)?;
     let mut buffer = Vec::new();
